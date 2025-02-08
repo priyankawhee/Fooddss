@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TasteTrends Explorer - Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: url('home1.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #efe4e4;
+      padding: 20px;
+    }
+
+    nav {
+      background-color: rgba(150, 138, 133, 0.9);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    nav h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    nav .nav-links {
+      list-style: none;
+      display: flex;
+    }
+
+    nav .nav-links li {
+      margin: 0 1rem;
+    }
+
+    nav .nav-links a {
+      text-decoration: none;
+      color: white;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+
+    nav .nav-links a:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .container {
+      text-align: center;
+      padding: 50px 20px;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      color: #ffffff;
+      margin-bottom: 24px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .stat-card {
+      background-color: white;
+      padding: 60px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Top Rated Category Card with Dessert Background */
+    .stat-card.top-category {
+      background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)),
+                  url('dessert.png') no-repeat center center;
+      background-size: cover;
+      color: #333;
+    }
+
+    /* Most Active Author Card with Authors Background */
+    .stat-card.most-active-author {
+      background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)),
+                  url('author.png') no-repeat center center;
+      background-size: cover;
+      color: #333;
+    }
+
+    /* Total Reviews Analyzed with Reviews Background */
+    .stat-card.total-reviews {
+      background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)),
+                  url('review.png') no-repeat center center;
+      background-size: cover;
+      color: #333;
+    }
+
+    /* Styling for the result values */
+    .result-value {
+      font-size: 3rem;
+      font-weight: 700;
+      color: black; /* Updated color to black */
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      margin: 10px 0;
+    }
+
+    .stat-popup {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background-color: #968a85;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 1rem;
+      text-align: center;
+      transition: transform 0.3s ease-in-out;
+      opacity: 0;
+    }
+
+    .stat-card:hover .stat-popup {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <h1></h1>
+    <ul class="nav-links">
+      <li><a href="home.html">Home</a></li>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <h1>Delve into Food Trends!</h1>
+    <p>Explore the most loved recipes, discover top contributors, and analyze insights from countless food reviews.</p>
+
+    <div class="stats">
+      <div class="stat-card top-category">
+        <h2>Top Rated Category</h2>
+        <p id="categoryValue" class="result-value">Loading...</p>
+        <div class="stat-popup">The best-loved recipe category!</div>
+      </div>
+      <div class="stat-card most-active-author">
+        <h2>Most Active Author</h2>
+        <p id="authorValue" class="result-value">Loading...</p>
+        <div class="stat-popup">This author has reviewed the most recipes!</div>
+      </div>
+      <div class="stat-card total-reviews">
+        <h2>Total Reviews Analyzed</h2>
+        <p id="reviewValue" class="result-value">Loading...</p>
+        <div class="stat-popup">All reviews processed!</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Fetch JSON data and update the stats
+    fetch('dashboard_data.json')
+      .then(response => response.json())
+      .then(data => {
+        // Top Rated Category
+        const topCategory = Object.keys(data.top_categories)[0];
+        document.getElementById('categoryValue').textContent = topCategory;
+
+        // Most Active Author
+        const mostActiveAuthor = Object.keys(data.top_authors)[0];
+        document.getElementById('authorValue').textContent = mostActiveAuthor;
+
+        // Total Reviews Analyzed
+        const totalReviews = data.total_reviews || Object.values(data.rating_counts).reduce((a, b) => a + b, 0);
+        document.getElementById('reviewValue').textContent = totalReviews;
+      })
+      .catch(error => {
+        console.error('Error loading data:', error);
+        document.getElementById('categoryValue').textContent = "Data unavailable";
+        document.getElementById('authorValue').textContent = "Data unavailable";
+        document.getElementById('reviewValue').textContent = "Data unavailable";
+      });
+  </script>
+</body>
+</html>
